@@ -12,8 +12,7 @@ const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-space
 export const metadata: Metadata = {
   title: "Ananta Sharma | Full Stack Developer",
   description:
-    "Portfolio website of Ananta Sharma, a Full Stack Developer specializing in Next.js, React, Node.js, and more.",
-    generator: 'v0.dev'
+    "Portfolio website of Ananta Sharma, a Full Stack Developer specializing in Next.js, React, express.js, Node.js, and more.",
 }
 
 export default function RootLayout({
@@ -24,9 +23,16 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+        <link rel="preload" href={inter.style.src} as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="preload" href={spaceGrotesk.style.src} as="font" type="font/woff2" crossOrigin="anonymous" />
+        <meta
+          name="description"
+          content="Portfolio website of Ananta Sharma, a Full Stack Developer specializing in Next.js, React, Node.js, and more."
+        />
+        <meta name="theme-color" content="#DC2626" />
       </head>
-      <body className={`${inter.variable} ${spaceGrotesk.variable} font-sans`}>
+      <body className={`${inter.variable} ${spaceGrotesk.variable} font-sans antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <div className="flex min-h-screen flex-col">
             <Navbar />

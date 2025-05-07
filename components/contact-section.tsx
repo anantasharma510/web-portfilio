@@ -219,12 +219,12 @@ export default function ContactSection() {
                     <div>
                       <h4 className="font-medium">LinkedIn</h4>
                       <a
-                        href="https://linkedin.com/in/anantasharma"
+                        href="https://www.linkedin.com/in/ananta-sharma-7a6a3033b/"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-muted-foreground hover:text-primary transition-colors"
                       >
-                        linkedin.com/in/anantasharma
+                        ananta-sharma-7a6a3033b
                       </a>
                     </div>
                   </CardContent>
@@ -240,12 +240,12 @@ export default function ContactSection() {
                     <div>
                       <h4 className="font-medium">GitHub</h4>
                       <a
-                        href="https://github.com/anantasharma"
+                        href="https://github.com/anantasharma510"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-muted-foreground hover:text-primary transition-colors"
                       >
-                        github.com/anantasharma
+                        anantasharma510
                       </a>
                     </div>
                   </CardContent>

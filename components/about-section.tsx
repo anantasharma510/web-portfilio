@@ -1,43 +1,13 @@
 "use client"
 
 import { motion, useInView } from "framer-motion"
-import { Card, CardContent } from "@/components/ui/card"
-import Image from "next/image"
 import { useRef } from "react"
-
-const skills = [
-  { name: "HTML", icon: "/placeholder.svg?height=40&width=40" },
-  { name: "CSS", icon: "/placeholder.svg?height=40&width=40" },
-  { name: "JavaScript", icon: "/placeholder.svg?height=40&width=40" },
-  { name: "TypeScript", icon: "/placeholder.svg?height=40&width=40" },
-  { name: "React", icon: "/placeholder.svg?height=40&width=40" },
-  { name: "Next.js", icon: "/placeholder.svg?height=40&width=40" },
-  { name: "Node.js", icon: "/placeholder.svg?height=40&width=40" },
-  { name: "Express", icon: "/placeholder.svg?height=40&width=40" },
-  { name: "MongoDB", icon: "/placeholder.svg?height=40&width=40" },
-  { name: "PHP", icon: "/placeholder.svg?height=40&width=40" },
-  { name: "MySQL", icon: "/placeholder.svg?height=40&width=40" },
-  { name: "Tailwind CSS", icon: "/placeholder.svg?height=40&width=40" },
-]
+import FreelancePlatforms from "./freelance-platforms"
+import TechStackIcons from "./tech-stack-icons"
 
 export default function AboutSection() {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, amount: 0.2 })
-
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  }
-
-  const item = {
-    hidden: { opacity: 0, scale: 0.8 },
-    show: { opacity: 1, scale: 1, transition: { duration: 0.5 } },
-  }
 
   return (
     <section id="about" className="py-16 md:py-24 relative overflow-hidden">
@@ -50,6 +20,14 @@ export default function AboutSection() {
             x: [0, -30, 0],
           }}
           transition={{ duration: 18, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
+        />
+        <motion.div
+          className="absolute -bottom-20 left-20 w-80 h-80 rounded-full bg-primary/5 blur-3xl opacity-70"
+          animate={{
+            y: [0, -40, 0],
+            x: [0, 20, 0],
+          }}
+          transition={{ duration: 15, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
         />
       </div>
 
@@ -83,28 +61,29 @@ export default function AboutSection() {
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: 0.3 }}
               >
-                I'm Ananta Sharma, a passionate Full Stack Developer with expertise in building modern web applications.
-                With a strong foundation in both frontend and backend technologies, I create seamless, user-friendly
-                experiences.
+                I'm Ananta Sharma, a passionate Full Stack Developer from Pokhara, Nepal. Currently serving as the
+                President at Tech Research and Innovation PNC, where we organize various workshops and tech events to
+                foster innovation in our community.
               </motion.p>
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: 0.4 }}
               >
-                My journey in web development began 5 years ago, and since then, I've worked on various projects ranging
-                from e-commerce platforms to complex enterprise applications. I'm constantly learning and adapting to
-                new technologies to stay at the forefront of web development.
+                My journey in web development includes experience as a Next.js intern at AIDE ASCENT, working at Lunar
+                IT Solutions, and building a successful freelance career on platforms like Upwork and Fiverr.
               </motion.p>
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: 0.5 }}
               >
-                When I'm not coding, you can find me exploring new technologies, contributing to open-source projects,
-                or sharing my knowledge through blog posts and community forums.
+                I'm passionate about creating modern, responsive web applications with cutting-edge technologies and
+                sharing my knowledge with others through workshops and community events.
               </motion.p>
             </div>
+
+            <FreelancePlatforms />
           </motion.div>
 
           <div>
@@ -122,41 +101,7 @@ export default function AboutSection() {
                 transition={{ duration: 0.8, delay: 0.5 }}
               />
             </motion.h3>
-            <motion.div
-              variants={container}
-              initial="hidden"
-              animate={isInView ? "show" : ""}
-              className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4"
-            >
-              {skills.map((skill, index) => (
-                <motion.div
-                  key={skill.name}
-                  variants={item}
-                  whileHover={{ y: -5, scale: 1.05 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
-                  <Card className="h-full hover:border-primary transition-all duration-300 group overflow-hidden">
-                    <CardContent className="flex flex-col items-center justify-center p-3 sm:p-4 relative">
-                      <div className="w-10 h-10 sm:w-12 sm:h-12 relative mb-2 z-10">
-                        <Image
-                          src={skill.icon || "/placeholder.svg"}
-                          alt={skill.name}
-                          fill
-                          className="object-contain"
-                        />
-                      </div>
-                      <span className="text-xs sm:text-sm font-medium text-center z-10 relative">{skill.name}</span>
-                      <motion.div
-                        className="absolute inset-0 bg-primary/10 -z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                        initial={{ scale: 0 }}
-                        whileHover={{ scale: 1 }}
-                        transition={{ type: "spring", stiffness: 300 }}
-                      />
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
-            </motion.div>
+            <TechStackIcons />
           </div>
         </div>
       </div>

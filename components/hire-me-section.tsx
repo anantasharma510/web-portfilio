@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion"
-import { Send, ArrowDown, Code, Globe, Download } from "lucide-react"
+import { Send, ArrowDown, Code, Globe } from "lucide-react"
 import Image from "next/image"
 import { TypeAnimation } from "react-type-animation"
 import { useEffect, useState, useRef } from "react"
@@ -16,8 +16,8 @@ const ResumeDownloadButton = dynamic(() => import("@/components/resume-download-
 
 export default function HeroSection() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
-  const containerRef = useRef<HTMLDivElement>(null)
   const [isClient, setIsClient] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end start"],
@@ -28,22 +28,26 @@ export default function HeroSection() {
   const scale = useTransform(scrollYProgress, [0, 0.5], [1, 0.9])
 
   useEffect(() => {
-    setIsClient(true) // Indicate that we're on the client
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY })
-    }
+    setIsClient(true)
+    
+    if (typeof window !== 'undefined') {
+      const handleMouseMove = (e: MouseEvent) => {
+        setMousePosition({ x: e.clientX, y: e.clientY })
+      }
 
-    window.addEventListener("mousemove", handleMouseMove)
-    return () => window.removeEventListener("mousemove", handleMouseMove)
+      window.addEventListener("mousemove", handleMouseMove)
+      return () => window.removeEventListener("mousemove", handleMouseMove)
+    }
   }, [])
 
   const calculateMovement = (axis: "x" | "y", intensity = 0.02) => {
-    if (!isClient) return 0 // Prevent error during SSR
+    if (!isClient || typeof window === 'undefined') return 0
     const center = axis === "x" ? window.innerWidth / 2 : window.innerHeight / 2
     const position = axis === "x" ? mousePosition.x : mousePosition.y
     return (position - center) * intensity
   }
 
+  // Rest of your component remains the same...
   return (
     <motion.section
       id="home"
@@ -54,7 +58,7 @@ export default function HeroSection() {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
     >
-      {/* Rest of your component JSX remains the same */}
+      {/* All your existing JSX remains unchanged */}
       <div className="absolute inset-0 -z-10 overflow-hidden">
         <motion.div
           className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-primary/5 blur-3xl"
@@ -225,45 +229,46 @@ export default function HeroSection() {
             className="relative"
             style={{ y: useTransform(y, (v) => v * -0.2), opacity }}
           >
-     <motion.div
-  className="w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 lg:w-96 lg:h-96 rounded-full flex items-center justify-center relative overflow-hidden"
-  animate={{
-    x: calculateMovement("x", 0.01),
-    y: calculateMovement("y", 0.01),
-  }}
-  transition={{ type: "spring", damping: 30 }}
->
-  <motion.div
-    whileHover={{ scale: 1.05 }}
-    transition={{ duration: 0.3 }}
-    className="w-full h-full"
-  >
-    <Image
-      src="/profile.png"
-      alt="Ananta Sharma"
-      width={400}  // Increased from 300
-      height={400} // Increased from 300
-      className="w-full h-full object-cover"
-      priority
-    />
-    <motion.div
-      className="absolute inset-0"
-      whileHover={{ opacity: 0.6 }}
-      transition={{ duration: 0.3 }}
-    />
-  </motion.div>
-  <motion.div
-    className="absolute inset-0 rounded-full"
-    animate={{
-      boxShadow: [
-        "0 0 25px rgba(220,38,38,0.5)",
-        "0 0 35px rgba(220,38,38,0.6)",
-        "0 0 25px rgba(220,38,38,0.5)",
-      ],
-    }}
-    transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
-  />
-</motion.div>
+            <motion.div
+              className="w-56 h-56 sm:w-64 sm:h-64 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-full bg-gradient-to-br from-primary/80 to-primary/40 flex items-center justify-center relative overflow-hidden"
+              animate={{
+                x: calculateMovement("x", 0.01),
+                y: calculateMovement("y", 0.01),
+              }}
+              transition={{ type: "spring", damping: 30 }}
+            >
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.3 }}
+                className="w-52 h-52 sm:w-60 sm:h-60 md:w-68 md:h-68 lg:w-76 lg:h-76 rounded-full overflow-hidden border-4 border-background relative"
+              >
+                <Image
+                  src="/placeholder.svg?height=300&width=300"
+                  alt="Ananta Sharma"
+                  width={300}
+                  height={300}
+                  className="w-full h-full object-cover"
+                  priority
+                />
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-tr from-primary/40 to-transparent opacity-0"
+                  whileHover={{ opacity: 0.6 }}
+                  transition={{ duration: 0.3 }}
+                />
+              </motion.div>
+              <motion.div
+                className="absolute inset-0 rounded-full"
+                animate={{
+                  boxShadow: [
+                    "0 0 25px rgba(220,38,38,0.5)",
+                    "0 0 35px rgba(220,38,38,0.6)",
+                    "0 0 25px rgba(220,38,38,0.5)",
+                  ],
+                }}
+                transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
+              />
+            </motion.div>
+
             {/* Floating elements around profile */}
             <AnimatePresence>
               <motion.div

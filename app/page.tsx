@@ -4,13 +4,13 @@ import AboutSection from "@/components/about-section"
 import ExperienceSection from "@/components/experience-section"
 import ContactSection from "@/components/contact-section"
 import ScrollProgressBar from "@/components/scroll-progress-bar"
-import SocialSidebar from "@/components/social-sidebar"
+import EnhancedSocialSidebar from "@/components/enhanced-social-sidebar"
 
 export default function Home() {
   return (
     <>
       <ScrollProgressBar />
-      <SocialSidebar />
+      <EnhancedSocialSidebar />
       <HeroSection />
       <ProjectsSection />
       <AboutSection />

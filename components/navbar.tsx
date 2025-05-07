@@ -6,41 +6,89 @@ import { ModeToggle } from "./mode-toggle"
 import { Button } from "@/components/ui/button"
 import { Menu, X } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
+import { usePathname } from "next/navigation"
 
 const navItems = [
-  { name: "Home", href: "#home" },
-  { name: "Projects", href: "#projects" },
-  { name: "About", href: "#about" },
-  { name: "Experience", href: "#experience" },
-  { name: "Contact", href: "#contact" },
+  { name: "Home", href: "/" },
+  { name: "Projects", href: "/#projects" },
+  { name: "About", href: "/#about" },
+  { name: "Experience", href: "/#experience" },
+  { name: "Contact", href: "/#contact" },
+  { name: "Hire Me", href: "/hire-me" },
 ]
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const [activeSection, setActiveSection] = useState("home")
   const [scrolled, setScrolled] = useState(false)
+  const pathname = usePathname()
 
   useEffect(() => {
-    const handleScroll = () => {
-      const sections = document.querySelectorAll("section[id]")
-      const scrollPosition = window.scrollY + 100
-
-      sections.forEach((section) => {
-        const sectionTop = (section as HTMLElement).offsetTop
-        const sectionHeight = (section as HTMLElement).offsetHeight
-        const sectionId = section.getAttribute("id") || ""
-
-        if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
-          setActiveSection(sectionId)
+    // Throttle function to limit how often the scroll handler runs
+    const throttle = (callback: Function, delay: number) => {
+      let lastCall = 0
+      return (...args: any[]) => {
+        const now = new Date().getTime()
+        if (now - lastCall < delay) {
+          return
         }
-      })
+        lastCall = now
+        return callback(...args)
+      }
+    }
+
+    const handleScroll = throttle(() => {
+      // Only run section detection on homepage
+      if (pathname === "/") {
+        const scrollPosition = window.scrollY + 100
+
+        // Use a more efficient approach with Array.from and find
+        const sections = Array.from(document.querySelectorAll("section[id]"))
+        const currentSection = sections.find((section) => {
+          const sectionTop = (section as HTMLElement).offsetTop
+          const sectionHeight = (section as HTMLElement).offsetHeight
+          return scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight
+        })
+
+        if (currentSection) {
+          const sectionId = currentSection.getAttribute("id") || ""
+          if (sectionId !== activeSection) {
+            setActiveSection(sectionId)
+          }
+        }
+      }
 
       setScrolled(window.scrollY > 10)
-    }
+    }, 100) // Throttle to run at most every 100ms
 
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+  }, [pathname, activeSection])
+
+  // Set active section based on pathname
+  useEffect(() => {
+    if (pathname === "/hire-me") {
+      setActiveSection("hire-me")
+    } else if (pathname === "/") {
+      setActiveSection("home")
+    }
+  }, [pathname])
+
+  const isActive = (href: string) => {
+    if (href === "/") {
+      return activeSection === "home" && pathname === "/"
+    }
+
+    if (href === "/hire-me") {
+      return pathname === "/hire-me"
+    }
+
+    if (href.startsWith("/#")) {
+      return activeSection === href.substring(2) && pathname === "/"
+    }
+
+    return false
+  }
 
   return (
     <header
@@ -50,7 +98,7 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
-          <Link href="#home" className="text-2xl font-bold text-primary">
+          <Link href="/" className="text-2xl font-bold text-primary">
             AS
           </Link>
 
@@ -61,7 +109,7 @@ export default function Navbar() {
                 key={item.name}
                 href={item.href}
                 className={`text-sm font-medium transition-colors hover:text-primary ${
-                  activeSection === item.href.substring(1) ? "text-primary" : "text-foreground/70"
+                  isActive(item.href) ? "text-primary" : "text-foreground/70"
                 }`}
               >
                 {item.name}
@@ -97,7 +145,7 @@ export default function Navbar() {
                   href={item.href}
                   onClick={() => setIsOpen(false)}
                   className={`block py-3 text-base font-medium transition-colors hover:text-primary ${
-                    activeSection === item.href.substring(1) ? "text-primary" : "text-foreground/70"
+                    isActive(item.href) ? "text-primary" : "text-foreground/70"
                   }`}
                 >
                   {item.name}
