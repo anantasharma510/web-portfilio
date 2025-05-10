@@ -27,7 +27,7 @@ export default function Footer() {
           >
             © {new Date().getFullYear()} Ananta Sharma. All rights reserved.
           </motion.div>
-          <motion.div
+          {/* <motion.div
             className="text-center text-xs sm:text-sm text-muted-foreground mt-2"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -35,7 +35,7 @@ export default function Footer() {
             transition={{ duration: 0.5, delay: 0.2 }}
           >
             Built with Next.js, Tailwind CSS, and Framer Motion
-          </motion.div>
+          </motion.div> */}
         </div>
       </div>
     </footer>

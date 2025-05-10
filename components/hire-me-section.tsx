@@ -1,368 +1,473 @@
 "use client"
 
+import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
-import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion"
-import { Send, ArrowDown, Code, Globe } from "lucide-react"
-import Image from "next/image"
-import { TypeAnimation } from "react-type-animation"
-import { useEffect, useState, useRef } from "react"
-import dynamic from "next/dynamic"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Mail, Send, ExternalLink, MessageSquare, Calendar, Clock, DollarSign, Star } from "lucide-react"
 import Link from "next/link"
+import { useState } from "react"
 
-// Dynamically import the ResumeDownloadButton to avoid SSR issues with PDF generation
-const ResumeDownloadButton = dynamic(() => import("@/components/resume-download-button"), {
-  ssr: false,
-})
+const contactPlatforms = [
+  {
+    id: "email",
+    name: "Email",
+    icon: <Mail className="h-6 w-6 text-[#EA4335]" />,
+    color: "#EA4335",
+    link: "mailto:anantasharma510@gmail.com",
+    username: "anantasharma510@gmail.com",
+    description: "Direct email communication for project inquiries and collaborations.",
+    benefits: ["Detailed project discussions", "File attachments", "Professional communication"],
+    cta: "Send Email",
+  },
+  {
+    id: "fiverr",
+    name: "Fiverr",
+    icon: (
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="#1DBF73" className="h-6 w-6">
+        <path d="M23.004 15.588a.995.995 0 1 0 .002-1.99.995.995 0 0 0-.002 1.99zm-.996-3.705h-.85c-.546 0-.84.41-.84 1.092v2.466h-1.61v-3.558h-.684c-.547 0-.84.41-.84 1.092v2.466h-1.61v-4.874h1.61v.74c.264-.574.626-.74 1.163-.74h1.972v.74c.264-.574.625-.74 1.162-.74h.527v1.316zm-6.786 1.501h-3.359c.088.594.382.992 1.181.992.496 0 .988-.2 1.358-.496l.625.779c-.547.458-1.16.73-2.015.73-1.61 0-2.618-.917-2.618-2.466 0-1.533.99-2.466 2.442-2.466 1.358 0 2.397.777 2.397 2.35a3.08 3.08 0 0 1-.01.577zm-1.587-1.316c-.078-.586-.43-.938-1.142-.938-.625 0-1.045.352-1.123.938h2.265zm-5.716 3.558h-1.609v-3.558h-.43c-.537 0-.957.4-.957.917a.73.73 0 0 0 .039.235h-.04v2.406H3.7v-3.558h-.43c-.536 0-.956.4-.956.917a.73.73 0 0 0 .039.235h-.04v2.406H.704v-4.874h1.61v.74c.263-.574.624-.74 1.161-.74h.488v.74c.264-.574.625-.74 1.162-.74h.43v.74c.264-.574.635-.74 1.172-.74h.741v5.614zm21.996-5.596c0 .322-.261.583-.582.583a.583.583 0 0 1-.583-.583c0-.321.261-.582.583-.582.32 0 .582.261.582.582z" />
+      </svg>
+    ),
+    color: "#1DBF73",
+    link: "https://www.fiverr.com/sellers/anantasharma10",
+    username: "anantasharma10",
+    description: "Hire me for specific gigs and services with secure payment protection.",
+    benefits: ["Secure payments", "Clear deliverables", "Review system"],
+    cta: "View Fiverr Profile",
+  },
+  {
+    id: "upwork",
+    name: "Upwork",
+    icon: (
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="#6FDA44" className="h-6 w-6">
+        <path d="M18.561 13.158c-1.102 0-2.135-.467-3.074-1.227l.228-1.076.008-.042c.207-1.143.849-3.06 2.839-3.06a2.705 2.705 0 012.703 2.703 2.707 2.707 0 01-2.704 2.702zm0-8.14c-2.539 0-4.51 1.649-5.31 4.366-1.22-1.834-2.148-4.036-2.687-5.892H7.828v7.112a2.551 2.551 0 01-2.547 2.548 2.55 2.55 0 01-2.545-2.548V3.492H0v7.112c0 2.914 2.37 5.303 5.281 5.303 2.913 0 5.283-2.389 5.283-5.303v-1.19c.529 1.107 1.182 2.229 1.974 3.221l-1.673 7.873h2.797l1.213-5.71c1.063.679 2.285 1.109 3.686 1.109 3 0 5.439-2.452 5.439-5.45 0-3-2.439-5.439-5.439-5.439z" />
+      </svg>
+    ),
+    color: "#6FDA44",
+    link: "https://www.upwork.com/freelancers/~01d2d1c7562375d532",
+    username: "Ananta Sharma",
+    description: "Hire me for hourly or fixed-price projects with milestone-based payments.",
+    benefits: ["Hourly or fixed-price", "Milestone payments", "Work history & reviews"],
+    cta: "View Upwork Profile",
+  },
+  {
+    id: "instagram",
+    name: "Instagram",
+    icon: (
+      <svg viewBox="0 0 24 24" width="24" height="24" className="h-6 w-6">
+        <defs>
+          <radialGradient id="instaGradient" cx="30%" cy="107%" r="150%">
+            <stop offset="0%" stopColor="#fdf497" />
+            <stop offset="5%" stopColor="#fdf497" />
+            <stop offset="45%" stopColor="#fd5949" />
+            <stop offset="60%" stopColor="#d6249f" />
+            <stop offset="90%" stopColor="#285AEB" />
+          </radialGradient>
+        </defs>
+        <path
+          fill="url(#instaGradient)"
+          d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"
+        />
+      </svg>
+    ),
+    color: "#E1306C",
+    link: "https://www.instagram.com/samir__sharma10/",
+    username: "samir__sharma10",
+    description: "Connect with me on Instagram for casual inquiries and visual updates on my work.",
+    benefits: ["Visual portfolio", "Direct messaging", "Quick responses"],
+    cta: "Message on Instagram",
+  },
+]
 
-export default function HeroSection() {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
-  const [isClient, setIsClient] = useState(false)
-  const containerRef = useRef<HTMLDivElement>(null)
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end start"],
-  })
+const services = [
+  {
+    title: "Web Development",
+    description: "Full-stack web applications with modern technologies",
+    icon: <Code className="h-6 w-6 text-primary" />,
+    price: "Starting at $500",
+    deliveryTime: "2-4 weeks",
+  },
+  {
+    title: "UI/UX Design",
+    description: "User-centered design with intuitive interfaces",
+    icon: <Palette className="h-6 w-6 text-primary" />,
+    price: "Starting at $300",
+    deliveryTime: "1-2 weeks",
+  },
+  {
+    title: "E-commerce Solutions",
+    description: "Custom online stores with payment integration",
+    icon: <ShoppingCart className="h-6 w-6 text-primary" />,
+    price: "Starting at $800",
+    deliveryTime: "3-6 weeks",
+  },
+  {
+    title: "API Development",
+    description: "Robust and scalable API solutions",
+    icon: <Database className="h-6 w-6 text-primary" />,
+    price: "Starting at $400",
+    deliveryTime: "1-3 weeks",
+  },
+]
 
-  const y = useTransform(scrollYProgress, [0, 1], [0, 200])
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
-  const scale = useTransform(scrollYProgress, [0, 0.5], [1, 0.9])
+const testimonials = [
+  {
+    name: "Sarah Johnson",
+    company: "TechStart Inc.",
+    content:
+      "Working with Ananta was a pleasure. He delivered our project on time and exceeded our expectations with the quality of his work.",
+    rating: 5,
+  },
+  {
+    name: "Michael Chen",
+    company: "Global Solutions",
+    content:
+      "Ananta's attention to detail and problem-solving skills are exceptional. He quickly understood our requirements and delivered a perfect solution.",
+    rating: 5,
+  },
+  {
+    name: "Emma Williams",
+    company: "Creative Studios",
+    content:
+      "I was impressed by Ananta's communication skills and professionalism. He kept us updated throughout the project and was always responsive.",
+    rating: 4,
+  },
+]
 
-  useEffect(() => {
-    setIsClient(true)
-    
-    if (typeof window !== 'undefined') {
-      const handleMouseMove = (e: MouseEvent) => {
-        setMousePosition({ x: e.clientX, y: e.clientY })
-      }
-
-      window.addEventListener("mousemove", handleMouseMove)
-      return () => window.removeEventListener("mousemove", handleMouseMove)
-    }
-  }, [])
-
-  const calculateMovement = (axis: "x" | "y", intensity = 0.02) => {
-    if (!isClient || typeof window === 'undefined') return 0
-    const center = axis === "x" ? window.innerWidth / 2 : window.innerHeight / 2
-    const position = axis === "x" ? mousePosition.x : mousePosition.y
-    return (position - center) * intensity
-  }
-
-  // Rest of your component remains the same...
+// Import missing icons
+function Code(props) {
   return (
-    <motion.section
-      id="home"
-      className="relative min-h-screen pt-20 md:pt-24 lg:pt-32 pb-16 md:pb-24 flex items-center overflow-hidden"
-      ref={containerRef}
-      style={{ scale }}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.8 }}
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     >
-      {/* All your existing JSX remains unchanged */}
+      <polyline points="16 18 22 12 16 6"></polyline>
+      <polyline points="8 6 2 12 8 18"></polyline>
+    </svg>
+  )
+}
+
+function Palette(props) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="13.5" cy="6.5" r=".5"></circle>
+      <circle cx="17.5" cy="10.5" r=".5"></circle>
+      <circle cx="8.5" cy="7.5" r=".5"></circle>
+      <circle cx="6.5" cy="12.5" r=".5"></circle>
+      <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"></path>
+    </svg>
+  )
+}
+
+function ShoppingCart(props) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="8" cy="21" r="1"></circle>
+      <circle cx="19" cy="21" r="1"></circle>
+      <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path>
+    </svg>
+  )
+}
+
+function Database(props) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+      <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+      <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+    </svg>
+  )
+}
+
+export default function HireMeSection() {
+  const [activeTab, setActiveTab] = useState("contact")
+
+  return (
+    <section className="py-16 md:py-24 relative overflow-hidden">
+      {/* Background elements */}
       <div className="absolute inset-0 -z-10 overflow-hidden">
         <motion.div
-          className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-primary/5 blur-3xl"
+          className="absolute top-1/4 right-0 w-72 h-72 rounded-full bg-primary/5 blur-3xl"
           animate={{
-            x: [0, -20, 0],
-            y: [0, -20, 0],
+            y: [0, 50, 0],
+            x: [0, -30, 0],
           }}
-          transition={{
-            duration: 15,
-            repeat: Number.POSITIVE_INFINITY,
-            ease: "easeInOut",
-            repeatType: "mirror",
-          }}
-          style={{ opacity }}
+          transition={{ duration: 18, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
         />
         <motion.div
-          className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-primary/10 blur-3xl"
+          className="absolute -bottom-20 left-20 w-80 h-80 rounded-full bg-primary/5 blur-3xl opacity-70"
           animate={{
+            y: [0, -40, 0],
             x: [0, 20, 0],
-            y: [0, 20, 0],
           }}
-          transition={{
-            duration: 18,
-            repeat: Number.POSITIVE_INFINITY,
-            ease: "easeInOut",
-            repeatType: "mirror",
-            delay: 1,
-          }}
-          style={{ opacity }}
+          transition={{ duration: 15, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
         />
       </div>
 
       <div className="section-container">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-12">
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="flex-1 text-center md:text-left"
-            style={{ y: useTransform(y, (v) => v * 0.5), opacity }}
-          >
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.5, ease: "easeOut" }}
-            >
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
-                Hi, I'm{" "}
-                <motion.span
-                  className="text-primary relative inline-block"
-                  whileHover={{ scale: 1.05 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
-                  Ananta Sharma
-                  <motion.span
-                    className="absolute -bottom-1 left-0 w-full h-1 bg-primary rounded-full"
-                    initial={{ width: 0 }}
-                    animate={{ width: "100%" }}
-                    transition={{ delay: 1, duration: 0.8 }}
-                  />
-                </motion.span>
-              </h1>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.6, duration: 0.5, ease: "easeOut" }}
-              className="relative"
-            >
-              <div className="flex items-center justify-center md:justify-start gap-2 mb-2">
-                <motion.div
-                  initial={{ rotate: -10, opacity: 0 }}
-                  animate={{ rotate: 0, opacity: 1 }}
-                  transition={{ delay: 0.7, duration: 0.5 }}
-                >
-                  <Code size={24} className="text-primary" />
-                </motion.div>
-                <h2 className="text-xl sm:text-2xl md:text-3xl font-medium text-foreground/80">
-                  <TypeAnimation
-                    sequence={[
-                      "Full Stack Developer",
-                      1000,
-                      "Freelancer",
-                      1000,
-                      "Next.js Expert",
-                      1000,
-                      "UI/UX Enthusiast",
-                      1000,
-                    ]}
-                    wrapper="span"
-                    speed={50}
-                    repeat={Number.POSITIVE_INFINITY}
-                  />
-                </h2>
-              </div>
-
-              <motion.div
-                className="flex items-center justify-center md:justify-start gap-2 text-sm text-muted-foreground"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.8, duration: 0.5, ease: "easeOut" }}
-              >
-                <Globe size={16} className="text-primary/70" />
-                <span>Pokhara, Nepal</span>
-              </motion.div>
-            </motion.div>
-
-            <motion.p
-              className="text-lg my-8 text-muted-foreground max-w-xl mx-auto md:mx-0"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.9, duration: 0.5, ease: "easeOut" }}
-            >
-              Passionate Full Stack Developer and Freelancer specializing in creating modern, responsive web
-              applications. Currently serving as President at Tech Research and Innovation PNC, where we organize
-              various workshops and tech events.
-            </motion.p>
-
-            <motion.div
-              className="flex flex-wrap gap-4 justify-center md:justify-start"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.2, duration: 0.5, ease: "easeOut" }}
-            >
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 1.3, duration: 0.5 }}
-                className="w-full sm:w-auto"
-              >
-                <ResumeDownloadButton />
-              </motion.div>
-
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 1.4, duration: 0.5 }}
-                className="w-full sm:w-auto"
-              >
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="gap-2 relative overflow-hidden group w-full sm:w-auto"
-                  asChild
-                >
-                  <Link href="/hire-me">
-                    <span
-                      className="absolute inset-0 w-full h-full bg-gradient-to-r from-primary/0 via-primary/10 to-primary/0 group-hover:animate-shimmer"
-                      style={{ transform: "translateX(-100%)" }}
-                    />
-                    <Send size={18} />
-                    Hire Me
-                  </Link>
-                </Button>
-              </motion.div>
-            </motion.div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="relative"
-            style={{ y: useTransform(y, (v) => v * -0.2), opacity }}
-          >
-            <motion.div
-              className="w-56 h-56 sm:w-64 sm:h-64 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-full bg-gradient-to-br from-primary/80 to-primary/40 flex items-center justify-center relative overflow-hidden"
-              animate={{
-                x: calculateMovement("x", 0.01),
-                y: calculateMovement("y", 0.01),
-              }}
-              transition={{ type: "spring", damping: 30 }}
-            >
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                transition={{ duration: 0.3 }}
-                className="w-52 h-52 sm:w-60 sm:h-60 md:w-68 md:h-68 lg:w-76 lg:h-76 rounded-full overflow-hidden border-4 border-background relative"
-              >
-                <Image
-                  src="/placeholder.svg?height=300&width=300"
-                  alt="Ananta Sharma"
-                  width={300}
-                  height={300}
-                  className="w-full h-full object-cover"
-                  priority
-                />
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-tr from-primary/40 to-transparent opacity-0"
-                  whileHover={{ opacity: 0.6 }}
-                  transition={{ duration: 0.3 }}
-                />
-              </motion.div>
-              <motion.div
-                className="absolute inset-0 rounded-full"
-                animate={{
-                  boxShadow: [
-                    "0 0 25px rgba(220,38,38,0.5)",
-                    "0 0 35px rgba(220,38,38,0.6)",
-                    "0 0 25px rgba(220,38,38,0.5)",
-                  ],
-                }}
-                transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
-              />
-            </motion.div>
-
-            {/* Floating elements around profile */}
-            <AnimatePresence>
-              <motion.div
-                className="absolute -top-4 -right-4 bg-background p-2 rounded-full shadow-lg border"
-                initial={{ opacity: 0, y: 20, rotate: -10 }}
-                animate={{ opacity: 1, y: 0, rotate: 0 }}
-                transition={{ delay: 1.5, duration: 0.5, type: "spring" }}
-                whileHover={{ y: -5, scale: 1.1, rotate: 5 }}
-              >
-                <div className="text-[#61DAFB]">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                  >
-                    <path d="M12 9.861a2.139 2.139 0 100 4.278 2.139 2.139 0 100-4.278zm-5.992 6.394l-.472-.12C2.018 15.246 0 13.737 0 11.996s2.018-3.25 5.536-4.139l.472-.119.133.468a23.53 23.53 0 001.363 3.578l.101.213-.101.213a23.307 23.307 0 00-1.363 3.578l-.133.467zM5.317 8.95c-2.674.751-4.315 1.9-4.315 3.046 0 1.145 1.641 2.294 4.315 3.046a24.95 24.95 0 011.182-3.046A24.752 24.752 0 015.317 8.95zm12.675 7.305l-.133-.469a23.357 23.357 0 00-1.364-3.577l-.101-.213.101-.213a23.42 23.42 0 001.364-3.578l.133-.468.473.119c3.517.889 5.535 2.398 5.535 4.14s-2.018 3.25-5.535 4.139l-.473.12zm-.491-4.259c.48 1.039.877 2.06 1.182 3.046 2.675-.752 4.315-1.901 4.315-3.046 0-1.146-1.641-2.294-4.315-3.046a24.788 24.788 0 01-1.182 3.046zM5.31 8.945l-.133-.467C4.188 4.992 4.488 2.494 6 1.622c1.483-.856 3.864.155 6.359 2.716l.34.349-.34.349a23.552 23.552 0 00-2.422 2.967l-.135.193-.235.02a23.657 23.657 0 00-3.785.61l-.472.119zm1.896-6.63c-.268 0-.505.058-.705.173-.994.573-1.17 2.565-.485 5.253a25.122 25.122 0 013.233-.501 24.847 24.847 0 012.052-2.544c-1.56-1.519-3.037-2.381-4.095-2.381zm9.589 20.362c-.001 0-.001 0 0 0-1.425 0-3.255-1.073-5.154-3.023l-.34-.349.34-.349a23.53 23.53 0 002.421-2.968l.135-.193.234-.02a23.63 23.63 0 003.787-.609l.472-.119.134.468c.987 3.484.688 5.983-.824 6.854a2.38 2.38 0 01-1.205.308zm-4.096-3.381c1.56 1.519 3.037 2.381 4.095 2.381h.001c.267 0 .505-.058.704-.173.994-.573 1.171-2.566.485-5.254a25.02 25.02 0 01-3.234.501 24.674 24.674 0 01-2.051 2.545zM18.69 8.945l-.472-.119a23.479 23.479 0 00-3.787-.61l-.234-.02-.135-.193a23.414 23.414 0 00-2.421-2.967l-.34-.349.34-.349C14.135 1.778 16.515.767 18 1.622c1.512.872 1.812 3.37.824 6.855l-.134.468zM14.75 7.24c1.142.104 2.227.273 3.234.501.686-2.688.509-4.68-.485-5.253-.988-.571-2.845.304-4.8 2.208A24.849 24.849 0 0114.75 7.24zM7.206 22.677A2.38 2.38 0 016 22.369c-1.512-.871-1.812-3.369-.823-6.854l.132-.468.472.119c1.155.291 2.429.496 3.785.609l.235.02.134.193a23.596 23.596 0 002.422 2.968l.34.349-.34.349c-1.898 1.95-3.728 3.023-5.151 3.023zm-1.19-6.427c-.686 2.688-.509 4.681.485 5.254.987.563 2.843-.305 4.8-2.208a24.998 24.998 0 01-2.052-2.545 24.976 24.976 0 01-3.233-.501zm5.984.628c-.823 0-1.669-.036-2.516-.106l-.235-.02-.135-.193a30.388 30.388 0 01-1.35-2.122 30.354 30.354 0 01-1.166-2.228l-.1-.213.1-.213a30.3 30.3 0 011.166-2.228c.414-.716.869-1.43 1.35-2.122l.135-.193.235-.02a29.785 29.785 0 015.033 0l.234.02.134.193a30.006 30.006 0 012.517 4.35l.101.213-.101.213a29.6 29.6 0 01-2.517 4.35l-.134.193-.234.02c-.847.07-1.694.106-2.517.106zm-2.197-1.084c1.48.111 2.914.111 4.395 0a29.006 29.006 0 002.196-3.798 28.585 28.585 0 00-2.197-3.798 29.031 29.031 0 00-4.394 0 28.477 28.477 0 00-2.197 3.798 29.114 29.114 0 002.197 3.798z" />
-                  </svg>
-                </div>
-              </motion.div>
-
-              <motion.div
-                className="absolute top-1/2 -left-6 bg-background p-2 rounded-full shadow-lg border"
-                initial={{ opacity: 0, x: 20, rotate: 10 }}
-                animate={{ opacity: 1, x: 0, rotate: 0 }}
-                transition={{ delay: 1.7, duration: 0.5, type: "spring" }}
-                whileHover={{ x: -5, scale: 1.1, rotate: -5 }}
-              >
-                <div className="text-[#38BDF8]">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                  >
-                    <path d="M12.001,4.8c-3.2,0-5.2,1.6-6,4.8c1.2-1.6,2.6-2.2,4.2-1.8c0.913,0.228,1.565,0.89,2.288,1.624 C13.666,10.618,15.027,12,18.001,12c3.2,0,5.2-1.6,6-4.8c-1.2,1.6-2.6,2.2-4.2,1.8c-0.913-0.228-1.565-0.89-2.288-1.624 C16.337,6.182,14.976,4.8,12.001,4.8z M6.001,12c-3.2,0-5.2,1.6-6,4.8c1.2-1.6,2.6-2.2,4.2-1.8c0.913,0.228,1.565,0.89,2.288,1.624 c1.177,1.194,2.538,2.576,5.512,2.576c3.2,0,5.2-1.6,6-4.8c-1.2,1.6-2.6,2.2-4.2,1.8c-0.913-0.228-1.565-0.89-2.288-1.624 C10.337,13.382,8.976,12,6.001,12z" />
-                  </svg>
-                </div>
-              </motion.div>
-
-              <motion.div
-                className="absolute -bottom-2 right-8 bg-background p-2 rounded-full shadow-lg border"
-                initial={{ opacity: 0, y: -20, rotate: -10 }}
-                animate={{ opacity: 1, y: 0, rotate: 0 }}
-                transition={{ delay: 1.9, duration: 0.5, type: "spring" }}
-                whileHover={{ y: 5, scale: 1.1, rotate: 5 }}
-              >
-                <div className="text-[#000000]">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                  >
-                    <path d="M11.572 0c-.176 0-.31.001-.358.007a19.76 19.76 0 0 1-.364.033C7.443.346 4.25 2.185 2.228 5.012a11.875 11.875 0 0 0-2.119 5.243c-.096.659-.108.854-.108 1.747s.012 1.089.108 1.748c.652 4.506 3.86 8.292 8.209 9.695.779.25 1.6.422 2.534.525.363.04 1.935.04 2.299 0 1.611-.178 2.977-.577 4.323-1.264.207-.106.247-.134.219-.158-.02-.013-.9-1.193-1.955-2.62l-1.919-2.592-2.404-3.558a338.739 338.739 0 0 0-2.422-3.556c-.009-.002-.018 1.579-.023 3.51-.007 3.38-.01 3.515-.052 3.595a.426.426 0 0 1-.206.214c-.075.037-.14.044-.495.044H7.81l-.108-.068a.438.438 0 0 1-.157-.171l-.05-.106.006-4.703.007-4.705.072-.092a.645.645 0 0 1 .174-.143c.096-.047.134-.051.54-.051.478 0 .558.018.682.154.035.038 1.337 1.999 2.895 4.361a10760.433 10760.433 0 0 0 4.735 7.17l1.9 2.879.096-.063a12.317 12.317 0 0 0 2.466-2.163 11.944 11.944 0 0 0 2.824-6.134c.096-.66.108-.854.108-1.748 0-.893-.012-1.088-.108-1.747-.652-4.506-3.859-8.292-8.208-9.695a12.597 12.597 0 0 0-2.499-.523A33.119 33.119 0 0 0 11.573 0zm4.069 7.217c.347 0 .408.005.486.047a.473.473 0 0 1 .237.277c.018.06.023 1.365.018 4.304l-.006 4.218-.744-1.14-.746-1.14v-3.066c0-1.982.01-3.097.023-3.15a.478.478 0 0 1 .233-.296c.096-.05.13-.054.5-.054z" />
-                  </svg>
-                </div>
-              </motion.div>
-            </AnimatePresence>
-          </motion.div>
-        </div>
-      </div>
-
-      <motion.div
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2 hidden md:block"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 2, duration: 0.5, ease: "easeOut" }}
-        style={{ opacity: useTransform(scrollYProgress, [0, 0.2], [1, 0]) }}
-      >
         <motion.div
-          animate={{
-            y: [0, 10, 0],
-            transition: {
-              duration: 1.5,
-              repeat: Number.POSITIVE_INFINITY,
-              ease: "easeInOut",
-            },
-          }}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
         >
-          <a
-            href="#projects"
-            aria-label="Scroll down"
-            className="flex flex-col items-center gap-2 text-foreground/50 hover:text-primary transition-colors"
-          >
-            <span className="text-sm">Scroll Down</span>
-            <ArrowDown size={20} />
-          </a>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-center">Hire Me</h1>
+          <p className="text-lg text-muted-foreground max-w-3xl mx-auto text-center mb-12">
+            Ready to bring your ideas to life? I'm available for freelance projects, collaborations, and full-time
+            opportunities. Get in touch through any of the platforms below.
+          </p>
         </motion.div>
-      </motion.div>
-      {/* ... */}
-    </motion.section>
+
+        <Tabs defaultValue="contact" className="w-full" onValueChange={setActiveTab}>
+          <TabsList className="grid w-full grid-cols-3 mb-8">
+            <TabsTrigger value="contact">Contact Platforms</TabsTrigger>
+            <TabsTrigger value="services">Services</TabsTrigger>
+            <TabsTrigger value="testimonials">Testimonials</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="contact" className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {contactPlatforms.map((platform, index) => (
+                <motion.div
+                  key={platform.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-50px" }}
+                  transition={{
+                    duration: 0.4,
+                    delay: Math.min(index * 0.08, 0.3),
+                    ease: "easeOut",
+                  }}
+                >
+                  <Card className="h-full border-2 hover:border-primary/20 transition-all duration-300">
+                    <CardHeader className="pb-2">
+                      <div className="flex items-center gap-3 mb-2">
+                        <div className="p-2 rounded-full" style={{ backgroundColor: `${platform.color}15` }}>
+                          {platform.icon}
+                        </div>
+                        <CardTitle className="text-xl">{platform.name}</CardTitle>
+                      </div>
+                      <CardDescription className="text-sm">{platform.username}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-muted-foreground mb-4">{platform.description}</p>
+                      <div className="space-y-2">
+                        {platform.benefits.map((benefit, i) => (
+                          <div key={i} className="flex items-center gap-2 text-sm">
+                            <div className="h-1.5 w-1.5 rounded-full bg-primary" />
+                            <span>{benefit}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                    <CardFooter>
+                      <Button
+                        asChild
+                        className="w-full gap-2 group relative overflow-hidden"
+                        style={{
+                          backgroundColor: platform.color,
+                          color: platform.id === "upwork" || platform.id === "fiverr" ? "white" : undefined,
+                        }}
+                      >
+                        <Link href={platform.link} target="_blank" rel="noopener noreferrer">
+                          <span
+                            className="absolute inset-0 w-full h-full bg-white/20 group-hover:animate-shimmer"
+                            style={{ transform: "translateX(-100%)" }}
+                          />
+                          {platform.cta}
+                          <ExternalLink size={16} />
+                        </Link>
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.5 }}
+              className="mt-12 bg-secondary/30 p-6 rounded-lg border"
+            >
+              <h3 className="text-xl font-bold mb-4">Quick Response Guarantee</h3>
+              <div className="flex flex-col sm:flex-row gap-6">
+                <div className="flex items-start gap-3">
+                  <MessageSquare className="h-6 w-6 text-primary mt-1" />
+                  <div>
+                    <h4 className="font-medium">Fast Communication</h4>
+                    <p className="text-sm text-muted-foreground">I respond to all inquiries within 24 hours</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <Calendar className="h-6 w-6 text-primary mt-1" />
+                  <div>
+                    <h4 className="font-medium">Project Timeline</h4>
+                    <p className="text-sm text-muted-foreground">Clear project schedules with regular updates</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <Clock className="h-6 w-6 text-primary mt-1" />
+                  <div>
+                    <h4 className="font-medium">Availability</h4>
+                    <p className="text-sm text-muted-foreground">Available for meetings in your timezone</p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </TabsContent>
+
+          <TabsContent value="services">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {services.map((service, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={activeTab === "services" ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                >
+                  <Card className="h-full border-2 hover:border-primary/20 transition-all duration-300">
+                    <CardHeader>
+                      <div className="flex items-center gap-3 mb-2">
+                        <div className="p-2 rounded-full bg-primary/10">{service.icon}</div>
+                        <CardTitle>{service.title}</CardTitle>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-muted-foreground mb-6">{service.description}</p>
+                      <div className="flex flex-col sm:flex-row justify-between gap-4">
+                        <div className="flex items-center gap-2">
+                          <DollarSign className="h-5 w-5 text-primary/70" />
+                          <span className="text-sm font-medium">{service.price}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Clock className="h-5 w-5 text-primary/70" />
+                          <span className="text-sm font-medium">{service.deliveryTime}</span>
+                        </div>
+                      </div>
+                    </CardContent>
+                    <CardFooter>
+                      <Button asChild className="w-full gap-2 group relative overflow-hidden">
+                        <Link href="mailto:anantasharma510@gmail.com">
+                          <span
+                            className="absolute inset-0 w-full h-full bg-gradient-to-r from-primary/0 via-primary/30 to-primary/0 group-hover:animate-shimmer"
+                            style={{ transform: "translateX(-100%)" }}
+                          />
+                          <Send size={16} />
+                          Request Quote
+                        </Link>
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="testimonials">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {testimonials.map((testimonial, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={activeTab === "testimonials" ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                >
+                  <Card className="h-full border-2 hover:border-primary/20 transition-all duration-300">
+                    <CardHeader>
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <CardTitle className="text-lg">{testimonial.name}</CardTitle>
+                          <CardDescription>{testimonial.company}</CardDescription>
+                        </div>
+                        <div className="flex">
+                          {[...Array(5)].map((_, i) => (
+                            <Star
+                              key={i}
+                              className={`h-4 w-4 ${
+                                i < testimonial.rating ? "text-yellow-500 fill-yellow-500" : "text-gray-300"
+                              }`}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-muted-foreground italic">"{testimonial.content}"</p>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          </TabsContent>
+        </Tabs>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.7 }}
+          className="mt-16 text-center"
+        >
+          <h2 className="text-2xl font-bold mb-4">Ready to Start Your Project?</h2>
+          <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
+            Let's discuss your project requirements and create something amazing together. I'm currently available for
+            new opportunities.
+          </p>
+          <Button size="lg" asChild className="gap-2 group relative overflow-hidden">
+            <Link href="mailto:anantasharma510@gmail.com">
+              <span
+                className="absolute inset-0 w-full h-full bg-gradient-to-r from-primary/0 via-primary/30 to-primary/0 group-hover:animate-shimmer"
+                style={{ transform: "translateX(-100%)" }}
+              />
+              <Send size={18} />
+              Get in Touch
+            </Link>
+          </Button>
+        </motion.div>
+      </div>
+    </section>
   )
 }
