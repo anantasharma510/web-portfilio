@@ -6,7 +6,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { ArrowLeft, Mail, Trash2 } from "lucide-react"
+import { ArrowLeft, Mail, Trash2, Reply } from "lucide-react"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -67,12 +67,12 @@ export default function MessageDetail({ message }: MessageDetailProps) {
 
   return (
     <>
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-4 md:mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <Link href="/admin/messages" className="flex items-center text-muted-foreground hover:text-foreground">
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Messages
         </Link>
-        <Button variant="destructive" onClick={() => setDeleteDialogOpen(true)}>
+        <Button variant="destructive" onClick={() => setDeleteDialogOpen(true)} className="w-full sm:w-auto">
           <Trash2 className="mr-2 h-4 w-4" />
           Delete Message
         </Button>
@@ -80,11 +80,11 @@ export default function MessageDetail({ message }: MessageDetailProps) {
 
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="text-2xl">{message.name}</CardTitle>
-              <CardDescription className="flex items-center mt-1">
-                <Mail className="mr-2 h-4 w-4" />
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="min-w-0 flex-1">
+              <CardTitle className="text-xl md:text-2xl break-words">{message.name}</CardTitle>
+              <CardDescription className="flex items-center mt-1 break-all">
+                <Mail className="mr-2 h-4 w-4 flex-shrink-0" />
                 <a href={`mailto:${message.email}`} className="text-primary hover:underline">
                   {message.email}
                 </a>
@@ -97,20 +97,26 @@ export default function MessageDetail({ message }: MessageDetailProps) {
         </CardHeader>
         <CardContent>
           <div className="mb-4 text-sm text-muted-foreground">Received on {formatDate(message.createdAt)}</div>
-          <div className="bg-muted/50 p-4 rounded-md whitespace-pre-wrap">{message.message}</div>
+          <div className="bg-muted/50 p-4 rounded-md whitespace-pre-wrap break-words">{message.message}</div>
         </CardContent>
-        <CardFooter className="flex justify-between">
-          <Button variant="outline" asChild>
+        <CardFooter className="flex flex-col sm:flex-row gap-4">
+          <Button variant="outline" asChild className="w-full sm:w-auto">
             <Link href="/admin/messages">Back to Messages</Link>
           </Button>
-          <Button variant="default" asChild>
-            <a href={`mailto:${message.email}?subject=Re: Contact Form Submission`}>Reply via Email</a>
+          <Button variant="default" asChild className="w-full sm:w-auto">
+            <a
+              href={`mailto:${message.email}?subject=Re: Contact Form Submission`}
+              className="flex items-center justify-center"
+            >
+              <Reply className="mr-2 h-4 w-4" />
+              Reply via Email
+            </a>
           </Button>
         </CardFooter>
       </Card>
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
+        <AlertDialogContent className="mx-4 max-w-md">
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
@@ -118,12 +124,14 @@ export default function MessageDetail({ message }: MessageDetailProps) {
               from the server.
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+          <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+            <AlertDialogCancel disabled={isDeleting} className="w-full sm:w-auto">
+              Cancel
+            </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDelete}
               disabled={isDeleting}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 w-full sm:w-auto"
             >
               {isDeleting ? "Deleting..." : "Delete"}
             </AlertDialogAction>

@@ -16,6 +16,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
+import { Card, CardHeader, CardTitle } from "@/components/ui/card"
+import { MoreVertical, Shield, UserIcon } from "lucide-react"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useToast } from "@/hooks/use-toast"
 import { format } from "date-fns"
 import type { User } from "@/lib/models/user"
@@ -106,9 +109,58 @@ export default function UsersList({ initialUsers, currentUserEmail }: UsersListP
       .substring(0, 2)
   }
 
+  // Mobile card view
+  const MobileUserCard = ({ user }: { user: User }) => (
+    <Card className="mb-4">
+      <CardHeader className="pb-3">
+        <div className="flex items-start justify-between">
+          <div className="flex items-center space-x-3 flex-1 min-w-0">
+            <Avatar className="h-12 w-12 flex-shrink-0">
+              <AvatarImage src={user.image || ""} alt={user.name || "User"} />
+              <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
+            </Avatar>
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2 mb-1">
+                <CardTitle className="text-base font-medium truncate">{user.name || "No name"}</CardTitle>
+                <Badge variant={user.role === "admin" ? "default" : "outline"} className="text-xs">
+                  {user.role}
+                </Badge>
+              </div>
+              <p className="text-sm text-muted-foreground truncate">{user.email}</p>
+              <p className="text-xs text-muted-foreground mt-1">Joined {formatDate(user.createdAt)}</p>
+            </div>
+          </div>
+          {user.email !== currentUserEmail && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-8 w-8 flex-shrink-0">
+                  <MoreVertical className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {user.role === "user" ? (
+                  <DropdownMenuItem onClick={() => handleRoleChange(user, "admin")} className="flex items-center">
+                    <Shield className="mr-2 h-4 w-4" />
+                    Make Admin
+                  </DropdownMenuItem>
+                ) : (
+                  <DropdownMenuItem onClick={() => handleRoleChange(user, "user")} className="flex items-center">
+                    <UserIcon className="mr-2 h-4 w-4" />
+                    Remove Admin
+                  </DropdownMenuItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+        </div>
+      </CardHeader>
+    </Card>
+  )
+
   return (
     <>
-      <div className="rounded-md border">
+      {/* Desktop Table View */}
+      <div className="hidden md:block rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
@@ -166,8 +218,19 @@ export default function UsersList({ initialUsers, currentUserEmail }: UsersListP
         </Table>
       </div>
 
+      {/* Mobile Card View */}
+      <div className="md:hidden">
+        {users.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">No users found.</p>
+          </div>
+        ) : (
+          users.map((user) => <MobileUserCard key={user._id?.toString()} user={user} />)
+        )}
+      </div>
+
       <AlertDialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
-        <AlertDialogContent>
+        <AlertDialogContent className="mx-4 max-w-md">
           <AlertDialogHeader>
             <AlertDialogTitle>Confirm Role Change</AlertDialogTitle>
             <AlertDialogDescription>
@@ -180,12 +243,14 @@ export default function UsersList({ initialUsers, currentUserEmail }: UsersListP
                   }? They will no longer have access to the admin dashboard.`}
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={isUpdating}>Cancel</AlertDialogCancel>
+          <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+            <AlertDialogCancel disabled={isUpdating} className="w-full sm:w-auto">
+              Cancel
+            </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleConfirmRoleChange}
               disabled={isUpdating}
-              className={newRole === "admin" ? "bg-amber-600 hover:bg-amber-700" : ""}
+              className={`${newRole === "admin" ? "bg-amber-600 hover:bg-amber-700" : ""} w-full sm:w-auto`}
             >
               {isUpdating ? "Updating..." : "Confirm"}
             </AlertDialogAction>

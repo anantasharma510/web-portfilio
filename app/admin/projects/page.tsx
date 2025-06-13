@@ -21,11 +21,11 @@ export default async function AdminProjectsPage() {
   const projects = await getProjects(db)
 
   return (
-    <div className="container py-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Manage Projects</h1>
+    <div className="space-y-4 md:space-y-8">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+        <h1 className="text-2xl md:text-3xl font-bold">Manage Projects</h1>
         <Link href="/admin/projects/new">
-          <Button className="flex items-center gap-2">
+          <Button className="flex items-center gap-2 w-full sm:w-auto">
             <Plus size={16} />
             <span>Add New Project</span>
           </Button>

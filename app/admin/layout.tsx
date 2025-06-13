@@ -7,7 +7,6 @@ import Link from "next/link"
 import MessagesNotification from "./components/messages-notification"
 import AdminHeader from "./components/admin-header"
 
-
 export default async function AdminLayout({
   children,
 }: {
@@ -20,32 +19,38 @@ export default async function AdminLayout({
     redirect("/unauthorized")
   }
 
-  // We'll use client-side fetching for CSRF token instead of server-side generation
-  // This avoids the cookie manipulation error
-
   return (
-    <div className="pt-24 pb-16 min-h-screen">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-        <div className="mb-8">
+    <div className="pt-16 md:pt-24 pb-16 min-h-screen">
+      <div className="container mx-auto px-2 sm:px-4 lg:px-8 max-w-7xl">
+        <div className="mb-4 md:mb-8">
           <AdminHeader user={session.user} />
 
-          <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
+          <h1 className="text-2xl md:text-3xl font-bold mb-4 md:mb-6">Admin Dashboard</h1>
 
           <Tabs defaultValue="projects" className="w-full">
-            <TabsList className="grid grid-cols-4 mb-8">
-              <TabsTrigger value="projects" asChild>
-                <Link href="/admin/projects">Projects</Link>
+            <TabsList className="grid grid-cols-2 md:grid-cols-4 mb-4 md:mb-8 h-auto p-1">
+              <TabsTrigger value="projects" asChild className="text-xs md:text-sm py-2 md:py-3">
+                <Link href="/admin/projects" className="flex items-center justify-center">
+                  <span className="hidden sm:inline">Projects</span>
+                  <span className="sm:hidden">Projects</span>
+                </Link>
               </TabsTrigger>
-              <TabsTrigger value="messages" asChild>
-                <Link href="/admin/messages">
+              <TabsTrigger value="messages" asChild className="text-xs md:text-sm py-2 md:py-3">
+                <Link href="/admin/messages" className="flex items-center justify-center">
                   <MessagesNotification />
                 </Link>
               </TabsTrigger>
-              <TabsTrigger value="users" asChild>
-                <Link href="/admin/users">Users</Link>
+              <TabsTrigger value="users" asChild className="text-xs md:text-sm py-2 md:py-3">
+                <Link href="/admin/users" className="flex items-center justify-center">
+                  <span className="hidden sm:inline">Users</span>
+                  <span className="sm:hidden">Users</span>
+                </Link>
               </TabsTrigger>
-              <TabsTrigger value="settings" asChild>
-                <Link href="/admin/settings">Settings</Link>
+              <TabsTrigger value="settings" asChild className="text-xs md:text-sm py-2 md:py-3">
+                <Link href="/admin/settings" className="flex items-center justify-center">
+                  <span className="hidden sm:inline">Settings</span>
+                  <span className="sm:hidden">Settings</span>
+                </Link>
               </TabsTrigger>
             </TabsList>
           </Tabs>
