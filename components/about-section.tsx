@@ -55,33 +55,30 @@ export default function AboutSection() {
                 transition={{ duration: 0.8, delay: 0.5 }}
               />
             </h3>
-            <div className="space-y-3 sm:space-y-4 text-muted-foreground">
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.5, delay: 0.3 }}
-              >
-                I'm Ananta Sharma, a passionate Full Stack Developer from Pokhara, Nepal. Currently serving as the
-                President at Tech Research and Innovation PNC, where we organize various workshops and tech events to
-                foster innovation in our community.
-              </motion.p>
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.5, delay: 0.4 }}
-              >
-                My journey in web development includes experience as a Next.js intern at AIDE ASCENT, working at Lunar
-                IT Solutions, and building a successful freelance career on platforms like Upwork and Fiverr.
-              </motion.p>
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.5, delay: 0.5 }}
-              >
-                I'm passionate about creating modern, responsive web applications with cutting-edge technologies and
-                sharing my knowledge with others through workshops and community events.
-              </motion.p>
-            </div>
+       <div className="space-y-3 sm:space-y-4 text-muted-foreground">
+  <motion.p
+    initial={{ opacity: 0, y: 20 }}
+    animate={isInView ? { opacity: 1, y: 0 } : {}}
+    transition={{ duration: 0.5, delay: 0.3 }}
+  >
+    I'm Ananta Sharma, a passionate Full Stack Developer from Pokhara, Nepal. I’m a former President of Tech Research and Innovation PNC, where I led workshops and tech events to foster innovation and learning within our community.
+  </motion.p>
+  <motion.p
+    initial={{ opacity: 0, y: 20 }}
+    animate={isInView ? { opacity: 1, y: 0 } : {}}
+    transition={{ duration: 0.5, delay: 0.4 }}
+  >
+    My journey in web development began with building websites using the MERN stack and Next.js. I’ve interned at AIDE ASCENT, worked with Lunar IT Solutions, and built a strong freelance presence on platforms like Upwork and Fiverr.
+  </motion.p>
+  <motion.p
+    initial={{ opacity: 0, y: 20 }}
+    animate={isInView ? { opacity: 1, y: 0 } : {}}
+    transition={{ duration: 0.5, delay: 0.5 }}
+  >
+    I'm passionate about creating modern, responsive web applications with cutting-edge technologies and sharing knowledge through workshops and community-driven events.
+  </motion.p>
+</div>
+
 
             <FreelancePlatforms />
           </motion.div>

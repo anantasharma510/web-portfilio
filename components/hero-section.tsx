@@ -140,10 +140,9 @@ export default function HeroSection() {
                       1000,
                       "Freelancer",
                       1000,
-                      "Next.js Expert",
+                      "Mern Stack + Next.js Expert",
                       1000,
-                      "UI/UX Enthusiast",
-                      1000,
+                      
                     ]}
                     wrapper="span"
                     speed={50}
@@ -169,9 +168,7 @@ export default function HeroSection() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.9, duration: 0.5, ease: "easeOut" }}
             >
-              Passionate Full Stack Developer and Freelancer specializing in creating modern, responsive web
-              applications. Currently serving as President at Tech Research and Innovation PNC, where we organize
-              various workshops and tech events.
+           a passionate Full Stack Developer. I began my tech journey by building websites using the MERN stack and Next.js, focusing on creating responsive and dynamic web applications. I'm also the former President of Tech Research and Innovation PNC, where I led workshops and tech events to promote innovation and hands-on learning. I'm driven by a passion for coding, continuous learning, and building impactful digital solutions.
             </motion.p>
 
             <motion.div

@@ -10,6 +10,14 @@ import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent } from "@/components/ui/card"
 import { Github, Linkedin, Mail, Send, ArrowRight } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
+import { z } from "zod"
+
+// Form validation schema
+const formSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  email: z.string().email("Please provide a valid email address"),
+  message: z.string().min(10, "Message must be at least 10 characters"),
+})
 
 export default function ContactSection() {
   const { toast } = useToast()
@@ -18,6 +26,7 @@ export default function ContactSection() {
     email: "",
     message: "",
   })
+  const [errors, setErrors] = useState<Record<string, string>>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, amount: 0.2 })
@@ -25,22 +34,78 @@ export default function ContactSection() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
+
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: "" }))
+    }
+  }
+
+  const validateForm = () => {
+    try {
+      formSchema.parse(formData)
+      setErrors({})
+      return true
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const newErrors: Record<string, string> = {}
+        error.errors.forEach((err) => {
+          if (err.path[0]) {
+            newErrors[err.path[0].toString()] = err.message
+          }
+        })
+        setErrors(newErrors)
+      }
+      return false
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    // Validate form
+    if (!validateForm()) {
+      toast({
+        title: "Form validation failed",
+        description: "Please check the form for errors.",
+        variant: "destructive",
+      })
+      return
+    }
+
     setIsSubmitting(true)
 
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 1500))
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      })
 
-    toast({
-      title: "Message sent!",
-      description: "Thank you for reaching out. I will get back to you soon.",
-    })
+      const data = await response.json()
 
-    setFormData({ name: "", email: "", message: "" })
-    setIsSubmitting(false)
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to send message")
+      }
+
+      toast({
+        title: "Message sent!",
+        description: "Thank you for reaching out. I will get back to you soon.",
+      })
+
+      setFormData({ name: "", email: "", message: "" })
+    } catch (error) {
+      console.error("Error sending message:", error)
+      toast({
+        title: "Error sending message",
+        description: error instanceof Error ? error.message : "Please try again later.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -96,8 +161,11 @@ export default function ContactSection() {
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  className="bg-background focus:border-primary transition-colors duration-300"
+                  className={`bg-background focus:border-primary transition-colors duration-300 ${
+                    errors.name ? "border-destructive" : ""
+                  }`}
                 />
+                {errors.name && <p className="text-destructive text-sm mt-1">{errors.name}</p>}
               </motion.div>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -111,8 +179,11 @@ export default function ContactSection() {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="bg-background focus:border-primary transition-colors duration-300"
+                  className={`bg-background focus:border-primary transition-colors duration-300 ${
+                    errors.email ? "border-destructive" : ""
+                  }`}
                 />
+                {errors.email && <p className="text-destructive text-sm mt-1">{errors.email}</p>}
               </motion.div>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -125,8 +196,11 @@ export default function ContactSection() {
                   value={formData.message}
                   onChange={handleChange}
                   required
-                  className="min-h-[150px] bg-background focus:border-primary transition-colors duration-300"
+                  className={`min-h-[150px] bg-background focus:border-primary transition-colors duration-300 ${
+                    errors.message ? "border-destructive" : ""
+                  }`}
                 />
+                {errors.message && <p className="text-destructive text-sm mt-1">{errors.message}</p>}
               </motion.div>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}

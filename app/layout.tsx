@@ -1,10 +1,13 @@
 import type React from "react"
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next" // Add Viewport type import
 import { Inter, Space_Grotesk } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
+import SessionProvider from "@/components/session-provider" // adjust path if needed
+import { getServerSession } from "next-auth/next"
+import { authOptions } from "./api/auth/[...nextauth]/route"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
 const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-space-grotesk" })
@@ -29,7 +32,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://www.anantasharma.com.np"),
   authors: [{ name: "Ananta Sharma", url: "https://www.anantasharma.com.np" }],
   creator: "Ananta Sharma",
-  themeColor: "#DC2626",
+  // themeColor: "#DC2626", // Remove from here
   openGraph: {
     title: "Ananta Sharma | Full Stack Developer",
     description:
@@ -50,34 +53,39 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Ananta Sharma | Full Stack Developer",
-    description:
-      "Portfolio of Ananta Sharma, building fast and scalable full stack applications.",
+    description: "Portfolio of Ananta Sharma, building fast and scalable full stack applications.",
     images: ["https://www.anantasharma.com.np/og-image.jpg"],
-    creator: "@yourTwitterHandle", // Replace with your actual Twitter handle
+    creator: "@yourTwitterHandle",
   },
 }
 
-export default function RootLayout({
+// Add this new viewport export
+export const viewport: Viewport = {
+  themeColor: "#DC2626", // Move themeColor here
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+}
+
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const session = await getServerSession(authOptions)
+
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-        <link rel="icon" href="/favicon.ico" />
-        <link rel="preload" href={inter.style.src} as="font" type="font/woff2" crossOrigin="anonymous" />
-        <link rel="preload" href={spaceGrotesk.style.src} as="font" type="font/woff2" crossOrigin="anonymous" />
-      </head>
       <body className={`${inter.variable} ${spaceGrotesk.variable} font-sans antialiased`}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          <div className="flex min-h-screen flex-col">
-            <Navbar />
-            <main className="flex-1">{children}</main>
-            <Footer />
-          </div>
-        </ThemeProvider>
+        <SessionProvider session={session}>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+            <div className="flex min-h-screen flex-col">
+              <Navbar />
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </div>
+          </ThemeProvider>
+        </SessionProvider>
       </body>
     </html>
   )
