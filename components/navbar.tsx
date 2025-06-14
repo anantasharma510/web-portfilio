@@ -219,23 +219,7 @@ export default function Navbar() {
                     </div>
                   </div>
 
-                  <Link
-                    href="/profile"
-                    className="flex items-center text-sm font-medium transition-colors hover:text-primary"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <User className="mr-2 h-4 w-4" />
-                    Profile
-                  </Link>
-
-                  <Link
-                    href="/settings"
-                    className="flex items-center text-sm font-medium transition-colors hover:text-primary"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <Settings className="mr-2 h-4 w-4" />
-                    Settings
-                  </Link>
+                
 
                   {session?.user?.role === "admin" && (
                     <Link

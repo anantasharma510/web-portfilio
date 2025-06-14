@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion"
-import { Send, ArrowDown, Code, Globe, Download } from "lucide-react"
+import { Send, ArrowDown, Code, Globe } from "lucide-react"
 import Image from "next/image"
 import { TypeAnimation } from "react-type-animation"
 import { useEffect, useState, useRef } from "react"
@@ -54,7 +54,7 @@ export default function HeroSection() {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
     >
-      {/* Rest of your component JSX remains the same */}
+      {/* Background elements */}
       <div className="absolute inset-0 -z-10 overflow-hidden">
         <motion.div
           className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-primary/5 blur-3xl"
@@ -135,15 +135,7 @@ export default function HeroSection() {
                 </motion.div>
                 <h2 className="text-xl sm:text-2xl md:text-3xl font-medium text-foreground/80">
                   <TypeAnimation
-                    sequence={[
-                      "Full Stack Developer",
-                      1000,
-                      "Freelancer",
-                      1000,
-                      "Mern Stack + Next.js Expert",
-                      1000,
-                      
-                    ]}
+                    sequence={["Full Stack Developer", 1000, "Freelancer", 1000, "Mern Stack + Next.js Expert", 1000]}
                     wrapper="span"
                     speed={50}
                     repeat={Number.POSITIVE_INFINITY}
@@ -162,27 +154,60 @@ export default function HeroSection() {
               </motion.div>
             </motion.div>
 
-            <motion.p
-              className="text-lg my-8 text-muted-foreground max-w-xl mx-auto md:mx-0"
+            {/* Improved biographical section */}
+            <motion.div
+              className="my-8 space-y-4 max-w-2xl mx-auto md:mx-0"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.9, duration: 0.5, ease: "easeOut" }}
             >
-           a passionate Full Stack Developer. I began my tech journey by building websites using the MERN stack and Next.js, focusing on creating responsive and dynamic web applications. I'm also the former President of Tech Research and Innovation PNC, where I led workshops and tech events to promote innovation and hands-on learning. I'm driven by a passion for coding, continuous learning, and building impactful digital solutions.
-            </motion.p>
+              <motion.p
+                className="text-base sm:text-lg text-muted-foreground leading-relaxed"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.0, duration: 0.5 }}
+              >
+                I'm a passionate <span className="text-foreground font-medium">Full Stack Developer</span> who began my
+                tech journey building websites using the{" "}
+                <span className="text-foreground font-medium">MERN stack and Next.js</span>, focusing on creating
+                responsive and dynamic web applications.
+              </motion.p>
+
+              <motion.p
+                className="text-base sm:text-lg text-muted-foreground leading-relaxed"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.1, duration: 0.5 }}
+              >
+                As the former{" "}
+                <span className="text-foreground font-medium">President of Tech Research and Innovation PNC</span>, I
+                led workshops and tech events to promote innovation and hands-on learning.
+              </motion.p>
+
+              <motion.p
+                className="text-base sm:text-lg text-muted-foreground leading-relaxed"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.2, duration: 0.5 }}
+              >
+                I'm driven by a passion for{" "}
+                <span className="text-foreground font-medium">coding, continuous learning</span>, and building{" "}
+                <span className="text-foreground font-medium">impactful digital solutions</span>.
+              </motion.p>
+            </motion.div>
 
             <motion.div
               className="flex flex-wrap gap-4 justify-center md:justify-start"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.2, duration: 0.5, ease: "easeOut" }}
+              transition={{ delay: 1.4, duration: 0.5, ease: "easeOut" }}
             >
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 1.3, duration: 0.5 }}
+                transition={{ delay: 1.5, duration: 0.5 }}
                 className="w-full sm:w-auto"
               >
                 <ResumeDownloadButton />
@@ -193,7 +218,7 @@ export default function HeroSection() {
                 whileTap={{ scale: 0.95 }}
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 1.4, duration: 0.5 }}
+                transition={{ delay: 1.6, duration: 0.5 }}
                 className="w-full sm:w-auto"
               >
                 <Button
@@ -222,45 +247,38 @@ export default function HeroSection() {
             className="relative"
             style={{ y: useTransform(y, (v) => v * -0.2), opacity }}
           >
-     <motion.div
-  className="w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 lg:w-96 lg:h-96 rounded-full flex items-center justify-center relative overflow-hidden"
-  animate={{
-    x: calculateMovement("x", 0.01),
-    y: calculateMovement("y", 0.01),
-  }}
-  transition={{ type: "spring", damping: 30 }}
->
-  <motion.div
-    whileHover={{ scale: 1.05 }}
-    transition={{ duration: 0.3 }}
-    className="w-full h-full"
-  >
-    <Image
-      src="/profile.png"
-      alt="Ananta Sharma"
-      width={400}  // Increased from 300
-      height={400} // Increased from 300
-      className="w-full h-full object-cover"
-      priority
-    />
-    <motion.div
-      className="absolute inset-0"
-      whileHover={{ opacity: 0.6 }}
-      transition={{ duration: 0.3 }}
-    />
-  </motion.div>
-  <motion.div
-    className="absolute inset-0 rounded-full"
-    animate={{
-      boxShadow: [
-        "0 0 25px rgba(220,38,38,0.5)",
-        "0 0 35px rgba(220,38,38,0.6)",
-        "0 0 25px rgba(220,38,38,0.5)",
-      ],
-    }}
-    transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
-  />
-</motion.div>
+            <motion.div
+              className="w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 lg:w-96 lg:h-96 rounded-full flex items-center justify-center relative overflow-hidden"
+              animate={{
+                x: calculateMovement("x", 0.01),
+                y: calculateMovement("y", 0.01),
+              }}
+              transition={{ type: "spring", damping: 30 }}
+            >
+              <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.3 }} className="w-full h-full">
+                <Image
+                  src="/profile.png"
+                  alt="Ananta Sharma"
+                  width={400}
+                  height={400}
+                  className="w-full h-full object-cover"
+                  priority
+                />
+                <motion.div className="absolute inset-0" whileHover={{ opacity: 0.6 }} transition={{ duration: 0.3 }} />
+              </motion.div>
+              <motion.div
+                className="absolute inset-0 rounded-full"
+                animate={{
+                  boxShadow: [
+                    "0 0 25px rgba(220,38,38,0.5)",
+                    "0 0 35px rgba(220,38,38,0.6)",
+                    "0 0 25px rgba(220,38,38,0.5)",
+                  ],
+                }}
+                transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
+              />
+            </motion.div>
+
             {/* Floating elements around profile */}
             <AnimatePresence>
               <motion.div
@@ -354,7 +372,6 @@ export default function HeroSection() {
           </a>
         </motion.div>
       </motion.div>
-      {/* ... */}
     </motion.section>
   )
 }
